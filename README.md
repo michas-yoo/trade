@@ -13,6 +13,10 @@
 - Tailwind CSS
 - ApexCharts (через `vue3-apexcharts`) для свечных графиков
 
+## Пример работы
+
+[![Смотреть демо на YouTube](https://img.youtube.com/vi/HigLConh1vw/hqdefault.jpg)](https://www.youtube.com/watch?v=HigLConh1vw)
+
 ## Быстрый старт
 
 1) Установите зависимости:
