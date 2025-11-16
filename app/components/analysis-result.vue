@@ -45,7 +45,7 @@ const emit = defineEmits(['toggle-graph']);
           <p class="text-sm text-slate-600">Данные по акции</p>
           <p class="text-slate-600">
             Информация за
-            <template v-if="daysSpan > 0"> {{ daysSpan }} {{ pluralize(daysSpan, ['день', 'дня', 'дней']) }} </template>
+            <template v-if="daysSpan > 0"> {{ daysSpan }} {{ pluralize(daysSpan, ['день', 'дня', 'дней']) }}</template>
             <template v-else>—</template>
           </p>
         </div>
@@ -58,7 +58,7 @@ const emit = defineEmits(['toggle-graph']);
 
 <style scoped>
 .result-block {
-  @apply flex items-center justify-between gap-3 rounded-lg bg-slate-50 p-4;
+  @apply flex flex-wrap items-center justify-between gap-3 rounded-lg bg-slate-50 p-4;
 
   &:not(:first-child) {
     @apply mt-4;

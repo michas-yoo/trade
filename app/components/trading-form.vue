@@ -61,7 +61,7 @@ function setDateTime(weeks = 1) {
       </div>
       <div class="form-field">
         <label for="from">С какого числа достать данные</label>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 max-sm:flex-wrap">
           <input type="datetime-local" name="from" id="from" v-model="from" />
 
           <button type="button" @click="setDateTime(1)">За неделю</button>

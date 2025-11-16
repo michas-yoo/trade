@@ -19,19 +19,19 @@
 
 ## Быстрый старт
 
-1) Установите зависимости:
+1. Установите зависимости:
 
 ```bash
 npm install
 ```
 
-2) Запустите dev‑сервер на http://localhost:3000:
+2. Запустите dev‑сервер на http://localhost:3000:
 
 ```bash
 npm run dev
 ```
 
-3) Сборка и предпросмотр production‑версии:
+3. Сборка и предпросмотр production‑версии:
 
 ```bash
 npm run build
@@ -55,18 +55,18 @@ UI слой (`app/components`, `app/pages`) зависит от `application/dom
 
 ## Data Flow (поток данных)
 
-1) Пользователь задаёт параметры в `TradingForm` и жмёт «Получить результат».
-2) `TradingForm` вызывает `getSignalForParams` (application), передавая адаптер `TBankApiAdapter` и параметры (`figi`,
+1. Пользователь задаёт параметры в `TradingForm` и жмёт «Получить результат».
+2. `TradingForm` вызывает `getSignalForParams` (application), передавая адаптер `TBankApiAdapter` и параметры (`figi`,
    `from`).
-3) `TBankApiAdapter` (infrastructure) запрашивает свечи, маппит ответ к доменным `Candles`.
-4) `getSignalForParams` передаёт `Candles` и `TradeConfig` в `getSignalForCandles`.
-5) `getSignalForCandles` выбирает стратегию (`SMA`/`EMA` и т.п.), рассчитывает `Signal` и возвращает
+3. `TBankApiAdapter` (infrastructure) запрашивает свечи, маппит ответ к доменным `Candles`.
+4. `getSignalForParams` передаёт `Candles` и `TradeConfig` в `getSignalForCandles`.
+5. `getSignalForCandles` выбирает стратегию (`SMA`/`EMA` и т.п.), рассчитывает `Signal` и возвращает
    `TradePrediction = { signal, candles }`.
-6) В `index.vue` полученный `TradePrediction`:
-    - сохраняется в `result` (часть `signal`),
-    - свечи маппятся через `mapCandlesToApexCharts` в `graphData`,
-    - рассчитывается `daysSpan = ceil(|last.time - first.time| / 86_400_000)` (минимум 1 день при наличии свечей).
-7) `AnalysisResult` отображает информацию и управляет показом графика; `CandlesGraph` строит свечной график по
+6. В `index.vue` полученный `TradePrediction`:
+   - сохраняется в `result` (часть `signal`),
+   - свечи маппятся через `mapCandlesToApexCharts` в `graphData`,
+   - рассчитывается `daysSpan = ceil(|last.time - first.time| / 86_400_000)` (минимум 1 день при наличии свечей).
+7. `AnalysisResult` отображает информацию и управляет показом графика; `CandlesGraph` строит свечной график по
    `graphData`.
 
 Таким образом, UI полностью отделён от деталей получения данных и расчёта — он принимает готовый результат use‑case'ов.
@@ -74,32 +74,34 @@ UI слой (`app/components`, `app/pages`) зависит от `application/dom
 ## Типы и контракты
 
 - `TradePrediction` (application/domain):
+
   ```ts
   type TradePrediction = {
     signal: Signal;
     candles: Candles;
-  }
+  };
   ```
+
   Единый результат анализа, используемый UI.
 
 - `MarketDataPort` (ports):
-    - Контракт получения свечей по параметрам (`figi`, `from`, и др. при необходимости).
-    - Реализации адаптеров размещаются в `core/infrastructure`.
+  - Контракт получения свечей по параметрам (`figi`, `from`, и др. при необходимости).
+  - Реализации адаптеров размещаются в `core/infrastructure`.
 
 - Мапперы:
-    - `mapTBankResponseToCandles` — внешняя → доменная модель;
-    - `mapCandlesToApexCharts` — доменная модель → формат графика.
+  - `mapTBankResponseToCandles` — внешняя → доменная модель;
+  - `mapCandlesToApexCharts` — доменная модель → формат графика.
 
 ## Конфигурация и расширение
 
 - Добавление новой стратегии:
-    1) Реализуйте функцию `get<YourStrategy>Result` в `core/domain/strategies/`.
-    2) Добавьте значение в enum `Strategy` и логику переключения в `getSignalForCandles`.
-    3) При необходимости расширьте `TradeConfig`.
+  1. Реализуйте функцию `get<YourStrategy>Result` в `core/domain/strategies/`.
+  2. Добавьте значение в enum `Strategy` и логику переключения в `getSignalForCandles`.
+  3. При необходимости расширьте `TradeConfig`.
 
 - Подключение иного источника данных:
-    1) Реализуйте новый адаптер, соответствующий `MarketDataPort` в `core/infrastructure/<provider>/`.
-    2) Подайте адаптер в `getSignalForParams` из UI вместо `TBankApiAdapter`.
+  1. Реализуйте новый адаптер, соответствующий `MarketDataPort` в `core/infrastructure/<provider>/`.
+  2. Подайте адаптер в `getSignalForParams` из UI вместо `TBankApiAdapter`.
 
 ## Известные ограничения и заметки
 
