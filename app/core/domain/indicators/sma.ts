@@ -1,16 +1,12 @@
 import { type Candles, hasEnoughCandlesData } from '../candle';
+import type { IndicatorSeries } from '~/core/domain/strategies/crossover';
 
-export type SimpleMovingAverage = {
-  time: number;
-  value: number;
-};
-
-export function calculateSMA(candles: Candles, period: number): SimpleMovingAverage[] {
+export function calculateSMA(candles: Candles, period: number): IndicatorSeries {
   if (!hasEnoughCandlesData(candles, period)) {
     return [];
   }
 
-  const smaValues: SimpleMovingAverage[] = [];
+  const smaValues: IndicatorSeries = [];
 
   for (let i = period - 1; i < candles.length; i++) {
     const slice = candles.slice(i - period + 1, i + 1);

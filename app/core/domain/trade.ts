@@ -1,4 +1,4 @@
-import type { Candles } from '~/core/domain/candle';
+import type { Candles } from './candle';
 
 export enum Operation {
   HOLD = 'hold',

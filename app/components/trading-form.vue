@@ -5,6 +5,7 @@ import { getSignalForParams } from '~/core/application/getSignalForParams';
 import { createInitialConfig } from '~/core/domain/config';
 import { Strategy } from '~/core/domain/strategies/strategy';
 import { MS_PER_WEEK } from '~/shared/constants';
+import MultiToggle from '~/components/multi-toggle.vue';
 
 const emit = defineEmits<{
   (name: 'submit', value: TradePrediction): void;
@@ -15,7 +16,7 @@ const emit = defineEmits<{
 const { strategies, availableTickers } = useConfig();
 
 const isLoading = ref(false);
-const from = ref(new Date().toISOString().slice(0, 16));
+const from = ref(new Date(new Date().getTime() - MS_PER_WEEK).toISOString().slice(0, 16));
 const currentTicker = ref(availableTickers[0]!.figi);
 const currentStrategy = ref<Strategy>(strategies[0]!.value);
 
@@ -64,9 +65,13 @@ function setDateTime(weeks = 1) {
         <div class="flex items-center gap-2 max-sm:flex-wrap">
           <input type="datetime-local" name="from" id="from" v-model="from" />
 
-          <button type="button" @click="setDateTime(1)">За неделю</button>
-          <button type="button" @click="setDateTime(2)">За две</button>
-          <button type="button" @click="setDateTime(4)">За четыре</button>
+          <multi-toggle
+            :options="[
+              { name: 'За неделю', callback: () => setDateTime(1) },
+              { name: 'За две', callback: () => setDateTime(2) },
+              { name: 'За четыре', callback: () => setDateTime(4) },
+            ]"
+          />
         </div>
       </div>
 

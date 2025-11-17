@@ -1,19 +1,15 @@
 import { type Candle, type Candles, hasEnoughCandlesData } from '../candle';
+import type { IndicatorPoint, IndicatorSeries } from '~/core/domain/strategies/crossover';
 import { calculateSMA } from './sma';
 
-export type ExponentialMovingAverage = {
-  time: number;
-  value: number;
-};
+const defaultEMA: IndicatorPoint = { time: 0, value: 1 };
 
-const defaultEMA: ExponentialMovingAverage = { time: 0, value: 1 };
-
-export function calculateEMA(candles: Candles, period: number): ExponentialMovingAverage[] {
+export function calculateEMA(candles: Candles, period: number): IndicatorSeries {
   if (!hasEnoughCandlesData(candles, period)) {
     return [];
   }
 
-  const ema: ExponentialMovingAverage[] = [];
+  const ema: IndicatorSeries = [];
   const alpha = 2 / (period + 1);
 
   // Первое значение EMA = простое среднее за "period" свечей

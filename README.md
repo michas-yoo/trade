@@ -25,13 +25,21 @@
 npm install
 ```
 
-2. Запустите dev‑сервер на http://localhost:3000:
+2. Сформируйте токен для доступа к API Т-Инвестиций
+
+Подробнее как это сделать: https://developer.tbank.ru/invest/intro/intro/token
+
+3. Настройте `.env`-файл
+
+Скопируйте `.env.example` и назовите `.env`. Далее вставьте токен для работы апи.
+
+4. Запустите dev‑сервер на http://localhost:3000:
 
 ```bash
 npm run dev
 ```
 
-3. Сборка и предпросмотр production‑версии:
+5. Сборка и предпросмотр production‑версии:
 
 ```bash
 npm run build
@@ -63,9 +71,9 @@ UI слой (`app/components`, `app/pages`) зависит от `application/dom
 5. `getSignalForCandles` выбирает стратегию (`SMA`/`EMA` и т.п.), рассчитывает `Signal` и возвращает
    `TradePrediction = { signal, candles }`.
 6. В `index.vue` полученный `TradePrediction`:
-   - сохраняется в `result` (часть `signal`),
-   - свечи маппятся через `mapCandlesToApexCharts` в `graphData`,
-   - рассчитывается `daysSpan = ceil(|last.time - first.time| / 86_400_000)` (минимум 1 день при наличии свечей).
+    - сохраняется в `result` (часть `signal`),
+    - свечи маппятся через `mapCandlesToApexCharts` в `graphData`,
+    - рассчитывается `daysSpan = ceil(|last.time - first.time| / 86_400_000)` (минимум 1 день при наличии свечей).
 7. `AnalysisResult` отображает информацию и управляет показом графика; `CandlesGraph` строит свечной график по
    `graphData`.
 
@@ -85,26 +93,17 @@ UI слой (`app/components`, `app/pages`) зависит от `application/dom
   Единый результат анализа, используемый UI.
 
 - `MarketDataPort` (ports):
-  - Контракт получения свечей по параметрам (`figi`, `from`, и др. при необходимости).
-  - Реализации адаптеров размещаются в `core/infrastructure`.
+    - Контракт получения свечей по параметрам (`figi`, `from`, и др. при необходимости).
+    - Реализации адаптеров размещаются в `core/infrastructure`.
 
 - Мапперы:
-  - `mapTBankResponseToCandles` — внешняя → доменная модель;
-  - `mapCandlesToApexCharts` — доменная модель → формат графика.
-
-## Конфигурация и расширение
-
-- Добавление новой стратегии:
-  1. Реализуйте функцию `get<YourStrategy>Result` в `core/domain/strategies/`.
-  2. Добавьте значение в enum `Strategy` и логику переключения в `getSignalForCandles`.
-  3. При необходимости расширьте `TradeConfig`.
-
-- Подключение иного источника данных:
-  1. Реализуйте новый адаптер, соответствующий `MarketDataPort` в `core/infrastructure/<provider>/`.
-  2. Подайте адаптер в `getSignalForParams` из UI вместо `TBankApiAdapter`.
+    - `mapTBankResponseToCandles` — внешняя → доменная модель;
+    - `mapCandlesToApexCharts` — доменная модель → формат графика.
 
 ## Известные ограничения и заметки
 
+- Токен хранится в `.env`-файле и в `runtimeConfig` накста. Это обеспечивает его безопасность, тк на фронте токен не
+  прочитать. Чтобы не светить его в нетворке, создан запрос на стороне сервера, который обрабатывает `Nitro`.
 - `daysSpan` вычисляется по первой и последней свече текущего набора; если данных нет, отображается «—».
 - Точность графика зависит от корректности временных меток `time` (мс) в доменных свечах.
 - UI показывает последний рассчитанный сигнал и даёт возможность быстро скрывать/показывать график.
