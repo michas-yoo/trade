@@ -55,7 +55,7 @@ function generateMessage(results: CalculationResult[]): string {
   return result.join('\n');
 }
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async () => {
   const config = createInitialConfig({ selectedStrategy: Strategy.EMA });
 
   const calculationResults: CalculationResult[] = await calculateSignalForAllTickers(config);
