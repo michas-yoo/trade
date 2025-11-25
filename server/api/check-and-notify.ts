@@ -56,12 +56,6 @@ function generateMessage(results: CalculationResult[]): string {
 }
 
 export default defineEventHandler(async (event) => {
-  const { vercelCronToken } = useRuntimeConfig();
-
-  if (event.headers.get('Authorization') !== `Bearer ${vercelCronToken}`) {
-    return { status: 401 };
-  }
-
   const config = createInitialConfig({ selectedStrategy: Strategy.EMA });
 
   const calculationResults: CalculationResult[] = await calculateSignalForAllTickers(config);
