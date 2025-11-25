@@ -1,0 +1,8 @@
+{
+  "cron": [
+    {
+      "path": "/api/check-and-notify",
+      "schedule": "0 10,13,16,19 * * *"
+    }
+  ]
+}

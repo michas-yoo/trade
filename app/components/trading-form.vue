@@ -4,7 +4,7 @@ import { TBankApiAdapter } from '~/core/infrastructure/tbankApi';
 import { getSignalForParams } from '~/core/application/getSignalForParams';
 import { createInitialConfig } from '~/core/domain/config';
 import { Strategy } from '~/core/domain/strategies/strategy';
-import { MS_PER_WEEK } from '~/shared/constants';
+import { AVAILABLE_TICKERS, MS_PER_WEEK, STRATEGIES } from '~/shared/constants';
 import MultiToggle from '~/components/multi-toggle.vue';
 
 const emit = defineEmits<{
@@ -13,12 +13,10 @@ const emit = defineEmits<{
   (name: 'loading'): void;
 }>();
 
-const { strategies, availableTickers } = useConfig();
-
 const isLoading = ref(false);
 const from = ref(new Date(new Date().getTime() - MS_PER_WEEK).toISOString().slice(0, 16));
-const currentTicker = ref(availableTickers[0]!.figi);
-const currentStrategy = ref<Strategy>(strategies[0]!.value);
+const currentTicker = ref(AVAILABLE_TICKERS[0]!.figi);
+const currentStrategy = ref<Strategy>(STRATEGIES[0]!.value);
 
 const tBankApi = new TBankApiAdapter();
 const config = createInitialConfig({ selectedStrategy: currentStrategy.value });
@@ -55,7 +53,7 @@ function setDateTime(weeks = 1) {
       <div class="form-field">
         <label for="ticker">Выберите акцию</label>
         <select name="ticker" id="ticker" v-model="currentTicker">
-          <option v-for="ticker in availableTickers" :key="ticker.figi" :value="ticker.figi">
+          <option v-for="ticker in AVAILABLE_TICKERS" :key="ticker.figi" :value="ticker.figi">
             {{ ticker.ticker }}
           </option>
         </select>
@@ -78,7 +76,7 @@ function setDateTime(weeks = 1) {
       <div class="form-field">
         <label for="strategy">По какой стратегии работать</label>
         <select name="strategy" id="strategy">
-          <option v-for="strategy in strategies" :key="strategy.value" :value="strategy.value">
+          <option v-for="strategy in STRATEGIES" :key="strategy.value" :value="strategy.value">
             {{ strategy.name }}
           </option>
         </select>
