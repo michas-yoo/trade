@@ -1,6 +1,6 @@
 <script setup lang="ts">
 onMounted(() => {
-  $fetch('/api/check-and-notify');
+  $fetch('/api/check');
 });
 </script>
 
