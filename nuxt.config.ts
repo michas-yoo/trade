@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     tBankApiURL: 'https://sandbox-invest-public-api.tbank.ru/rest/tinkoff.public.invest.api.contract.v1',
     tgChatId: import.meta.env.TG_CHAT_ID,
     tgBotToken: import.meta.env.TG_BOT_TOKEN,
+    vercelCronToken: import.meta.env.VERCEL_CRON_TOKEN,
   },
 
   app: {
