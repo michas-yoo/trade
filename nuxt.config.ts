@@ -5,6 +5,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     tBankToken: import.meta.env.TBANK_TOKEN,
+    tBankAccountId: import.meta.env.TBANK_ACCOUNT_ID,
     tBankApiURL: 'https://sandbox-invest-public-api.tbank.ru/rest/tinkoff.public.invest.api.contract.v1',
     tgChatId: import.meta.env.TG_CHAT_ID,
     tgBotToken: import.meta.env.TG_BOT_TOKEN,

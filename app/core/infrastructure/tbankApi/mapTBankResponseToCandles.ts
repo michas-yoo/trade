@@ -1,7 +1,6 @@
-import type { TBankCandleResponse, UnitData } from './tbankTypes';
+import type { TBankCandleResponse } from './tbankTypes';
 import type { Candles } from '~/core/domain/candle';
-
-const convertUnitToSingleNumber = (units: UnitData) => Number(`${units.units}.${units.nano.toString().slice(0, 2)}`);
+import { convertUnitToSingleNumber } from '~/shared/convertUnitToSingleNumber';
 
 export function mapTBankResponseToCandles(response: TBankCandleResponse): Candles {
   return response.candles.map((candle) => ({

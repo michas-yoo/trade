@@ -17,3 +17,15 @@ export type TBankCandleDTO = {
 export type TBankCandleResponse = {
   candles: TBankCandleDTO[];
 };
+
+export type TBankPortfolioStock = {
+  ticker: string;
+  figi: string;
+  quantity: number;
+  price: number;
+};
+
+export type TBankPortfolioResponse = {
+  cash: number;
+  stocks: TBankPortfolioStock[];
+};
