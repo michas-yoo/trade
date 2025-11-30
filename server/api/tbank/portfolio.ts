@@ -1,7 +1,10 @@
 import { convertUnitToSingleNumber } from '~/shared/convertUnitToSingleNumber';
 import type { TBankPortfolioResponse, TBankPortfolioStock, UnitData } from '~/core/infrastructure/tbankApi/tbankTypes';
 
-type PortfolioInstrumentType = 'stock' | 'currency';
+enum PortfolioInstrumentType {
+  STOCK = 'stock',
+  CURRENCY = 'currency',
+}
 
 type PortfolioQuantityWithCurrency = UnitData & {
   currency: string;
@@ -43,7 +46,7 @@ export default defineEventHandler(async (): Promise<TBankPortfolioResponse> => {
   return {
     cash: convertUnitToSingleNumber(portfolio.totalAmountCurrencies),
     stocks: portfolio.positions.reduce((acc: TBankPortfolioStock[], cur: PortfolioPosition): TBankPortfolioStock[] => {
-      if (cur.instrumentType === 'stock') return acc;
+      if (cur.instrumentType === PortfolioInstrumentType.CURRENCY) return acc;
 
       acc.push({
         ticker: cur.ticker,

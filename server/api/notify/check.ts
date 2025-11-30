@@ -1,35 +1,10 @@
 import { TBankApiAdapter } from '~/core/infrastructure/tbankApi';
-import { createInitialConfig, TradeConfig } from '~/core/domain/config';
+import { createInitialConfig } from '~/core/domain/config';
 import { Strategy } from '~/core/domain/strategies/strategy';
-import { AVAILABLE_TICKERS, MS_PER_WEEK } from '~/shared/constants';
-import { getSignalForParams } from '~/core/application/getSignalForParams';
-import { Operation, type TradePrediction } from '~/core/domain/trade';
-
-type CalculationResult = {
-  ticker: string;
-  signal: TradePrediction['signal']['signal'];
-  lastOperation: TradePrediction['signal']['lastOperation'];
-};
-
-async function calculateSignalForAllTickers(config: TradeConfig): Promise<CalculationResult[]> {
-  const tBankApi = new TBankApiAdapter();
-  const result: CalculationResult[] = [];
-
-  for await (let ticker of AVAILABLE_TICKERS) {
-    const signal = await getSignalForParams(
-      tBankApi,
-      {
-        tickerID: ticker.figi,
-        from: new Date(Date.now() - MS_PER_WEEK).toISOString(),
-      },
-      config
-    );
-
-    result.push({ ticker: ticker.ticker, ...signal.signal });
-  }
-
-  return result;
-}
+import { AVAILABLE_TICKERS } from '~/shared/constants';
+import { Operation } from '~/core/domain/trade';
+import type { CalculationResult } from '~/shared/types';
+import { calculateSignalForAllTickers } from '~/shared/calculateSignalForTickers';
 
 function getEmojiFromSignal(signal: Operation | null) {
   let emoji = '🤨';
@@ -57,8 +32,13 @@ function generateMessage(results: CalculationResult[]): string {
 
 export default defineEventHandler(async () => {
   const config = createInitialConfig({ selectedStrategy: Strategy.EMA });
+  const tBankApi = new TBankApiAdapter();
 
-  const calculationResults: CalculationResult[] = await calculateSignalForAllTickers(config);
+  const calculationResults: CalculationResult[] = await calculateSignalForAllTickers(
+    config,
+    tBankApi,
+    AVAILABLE_TICKERS
+  );
   const message = generateMessage(calculationResults);
 
   return $fetch('/api/telegram/send-message', {
