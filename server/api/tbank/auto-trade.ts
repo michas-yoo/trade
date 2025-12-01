@@ -7,6 +7,10 @@ import type { CalculationResult } from '~/shared/types';
 import { calculateSignalForAllTickers } from '~/shared/calculateSignalForTickers';
 import { AVAILABLE_TICKERS } from '~/shared/constants';
 
+type QueueItem = CalculationResult & {
+  success?: boolean;
+};
+
 async function runTrade(operation: Operation, figi: string, quantity: number) {
   return await $fetch('/api/tbank/trade', {
     method: 'POST',
@@ -29,8 +33,8 @@ export default defineEventHandler(async () => {
     AVAILABLE_TICKERS
   );
 
-  const buyQueue: CalculationResult[] = [];
-  const sellQueue: CalculationResult[] = [];
+  const buyQueue: QueueItem[] = [];
+  const sellQueue: QueueItem[] = [];
 
   for (let stock of calculationResults) {
     if (
@@ -56,15 +60,19 @@ export default defineEventHandler(async () => {
 
   if (!buyQueue.length) return;
 
-  for await (const buy of buyQueue.toSorted((a, b) => b.lastClosingPrice - a.lastClosingPrice)) {
-    const maxAmount = Math.floor(portfolio.cash / buy.lastClosingPrice);
-    const amount = Math.floor(maxAmount / buyQueue.length);
+  const sortedByPriceDesc = buyQueue.toSorted((a, b) => b.lastClosingPrice - a.lastClosingPrice);
+  for await (const buy of sortedByPriceDesc) {
+    const amount = Math.floor(portfolio.cash / buy.lastClosingPrice);
 
-    if (amount <= 0) continue;
+    if (amount <= 0) {
+      buy.success = false;
+      continue;
+    }
 
     await runTrade(Operation.BUY, buy.figi, amount);
+    buy.success = true;
     portfolio = await $fetch('/api/tbank/portfolio');
   }
 
-  return { status: 'ok' };
+  return { portfolio, buyQueue, sellQueue };
 });

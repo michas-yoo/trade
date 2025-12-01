@@ -1,7 +1,7 @@
 import type { CalculationResult } from '~/shared/types';
 import type { MarketDataPort } from '~/core/ports/MarketDataPort';
 import type { TradeConfig } from '~/core/domain/config';
-import { MS_PER_WEEK } from '~/shared/constants';
+import { MS_PER_HOUR, MS_PER_WEEK } from '~/shared/constants';
 import { getSignalForParams } from '~/core/application/getSignalForParams';
 
 export async function calculateSignalForAllTickers(
@@ -16,7 +16,7 @@ export async function calculateSignalForAllTickers(
       markerApi,
       {
         tickerID: ticker.figi,
-        from: new Date(Date.now() - MS_PER_WEEK).toISOString(),
+        from: new Date(Date.now() - MS_PER_WEEK - MS_PER_HOUR * 3).toISOString(),
       },
       config
     );
