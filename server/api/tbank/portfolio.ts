@@ -24,10 +24,8 @@ type TBankPortfolio = {
   positions: PortfolioPosition[];
 };
 
-async function fetchPortfolio(): Promise<TBankPortfolio> {
-  const { tBankApiURL, tBankToken, tBankAccountId } = useRuntimeConfig();
-
-  return await $fetch(`${tBankApiURL}.SandboxService/GetSandboxPortfolio`, {
+async function fetchPortfolio(url: string, tBankToken: string, tBankAccountId: string): Promise<TBankPortfolio> {
+  return await $fetch(url, {
     method: 'POST',
     body: JSON.stringify({
       accountId: tBankAccountId,
@@ -41,7 +39,12 @@ async function fetchPortfolio(): Promise<TBankPortfolio> {
 }
 
 export default defineEventHandler(async (): Promise<TBankPortfolioResponse> => {
-  const portfolio = await fetchPortfolio();
+  const { isSandboxMode, tBankApiURL, tBankApiURLSandbox, tBankToken, tBankAccountId } = useRuntimeConfig();
+
+  const url = isSandboxMode
+    ? `${tBankApiURLSandbox}.SandboxService/GetSandboxPortfolio`
+    : `${tBankApiURL}.OperationsService/GetPortfolio`;
+  const portfolio = await fetchPortfolio(url, tBankToken, tBankAccountId);
 
   return {
     cash: convertUnitToSingleNumber(portfolio.totalAmountCurrencies),

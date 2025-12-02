@@ -12,10 +12,12 @@ const getDirection = (operation: Operation) => {
 };
 
 export default defineEventHandler(async (event) => {
-  const { tBankToken, tBankApiURL, tBankAccountId } = useRuntimeConfig();
+  const { tBankToken, tBankApiURL, tBankAccountId, isSandboxMode } = useRuntimeConfig();
   const requestBody: TBankTradeRequestParams = await readBody(event);
 
-  return await $fetch(`${tBankApiURL}.SandboxService/PostSandboxOrder`, {
+  const url = isSandboxMode ? 'SandboxService/PostSandboxOrder' : 'OrdersService/PostOrder';
+
+  return await $fetch(`${tBankApiURL}.${url}`, {
     method: 'POST',
     body: JSON.stringify({
       quantity: String(requestBody.quantity),
